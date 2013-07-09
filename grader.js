@@ -55,6 +55,16 @@ var checkHtmlFile = function(htmlfile, checksfile) {
     }
     return out;
 };
+var checkHtmlURL = function(html, checksfile) {
+    $ = cheerio.load(html);
+    var checks = loadChecks(checksfile).sort();
+    var out = {};
+    for(var ii in checks) {
+        var present = $(checks[ii]).length > 0;
+        out[checks[ii]] = present;
+    }
+    return out;
+};
 
 var clone = function(fn) {
     // Workaround for commander.js issue.
@@ -72,7 +82,7 @@ if(require.main == module) {
 	url = program.url.toString();
 //	console.log(url);
 	rest.get(url).on('complete', function(result, response) {
-	    var checkJson = checkHtmlFile(result, program.checks);
+	    var checkJson = checkHtmlURL(result, program.checks);
 	    var outJson = JSON.stringify(checkJson, null, 4);
 	    console.log(outJson);
 });
